@@ -91,6 +91,10 @@ namespace LibraryManagementSystem.Repositories
             if (borrow == null || borrow.Status != "Borrowed")
                 return false;
 
+            var settings = await _context.SystemSettings.FirstOrDefaultAsync();
+            if (settings == null)
+                throw new InvalidOperationException("System settings not configured");
+
             // Validate new due date is after current due date
             if (newDueDate <= borrow.DueDate)
             {
@@ -98,14 +102,14 @@ namespace LibraryManagementSystem.Repositories
             }
 
             // Check maximum extension period (e.g., 30 days max)
-            var maxExtension = borrow.DueDate.AddDays(30);
+            var maxExtension = borrow.DueDate.AddDays(settings.MaxBorrowDuration);
             if (newDueDate > maxExtension)
             {
                 throw new ArgumentException($"Cannot extend beyond {maxExtension:yyyy-MM-dd}");
             }
 
             // Check if already extended too many times
-            if (borrow.ExtensionCount >= 2) // Example: max 2 extensions
+            if (borrow.ExtensionCount >= settings.MaxExtensionLimit) // Example: max 2 extensions
             {
                 throw new InvalidOperationException("Maximum extensions reached");
             }

@@ -123,3 +123,5 @@ F:\Bs23\ASP DOT NET\LibraryManagementSystem\LibraryManagementSystem\obj\Debug\ne
 F:\Bs23\ASP DOT NET\LibraryManagementSystem\LibraryManagementSystem\obj\Debug\net8.0\LibraryManagementSystem.pdb
 F:\Bs23\ASP DOT NET\LibraryManagementSystem\LibraryManagementSystem\obj\Debug\net8.0\LibraryManagementSystem.genruntimeconfig.cache
 F:\Bs23\ASP DOT NET\LibraryManagementSystem\LibraryManagementSystem\obj\Debug\net8.0\ref\LibraryManagementSystem.dll
+F:\Bs23\ASP DOT NET\LibraryManagementSystem\LibraryManagementSystem\obj\Debug\net8.0\LibraryManagementSystem.sourcelink.json
+F:\Bs23\ASP DOT NET\LibraryManagementSystem\LibraryManagementSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
