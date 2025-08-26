@@ -22,6 +22,8 @@ builder.Services.AddCors(options =>
 });
 
 
+
+
 // Add services to the container
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -137,11 +139,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
+app.UseCors("AllowReactApp");
 
 
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+
+
 
 app.MapControllers();
 
@@ -156,5 +162,6 @@ using (var scope = app.Services.CreateScope())
         await authService.Register("admin", "admin@library.com", "admin123", "Admin");
     }
 }
+
 
 app.Run();
