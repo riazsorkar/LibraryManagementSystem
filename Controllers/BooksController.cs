@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LibraryManagementSystem.DTOs;
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -21,13 +22,44 @@ public class BooksController : ControllerBase
         _mapper = mapper;
     }
 
-    // GET: api/Books
-    [AllowAnonymous] // Public access
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<BookResponseDTO>>> GetBooks()
+    
+    [AllowAnonymous]
+    [HttpGet("paginated")]
+    public async Task<ActionResult<PaginatedResponseDTO<BookResponseDTO>>> GetBooksPaginated(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var books = await _bookRepository.GetAllBooksAsync();
-        return Ok(_mapper.Map<IEnumerable<BookResponseDTO>>(books));
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+        if (pageSize > 100) pageSize = 100; // Limit page size for performance
+
+        var paginationRequest = new PaginationRequestDTO
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+
+        var paginatedBooks = await _bookRepository.GetBooksPaginatedAsync(paginationRequest);
+
+        var response = new PaginatedResponseDTO<BookResponseDTO>
+        {
+            Items = _mapper.Map<List<BookResponseDTO>>(paginatedBooks.Items),
+            TotalCount = paginatedBooks.TotalCount,
+            PageNumber = paginatedBooks.PageNumber,
+            PageSize = paginatedBooks.PageSize
+        };
+
+        return Ok(response);
+    }
+
+    // Optional: Update the existing GetAll to use pagination too
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<ActionResult<PaginatedResponseDTO<BookResponseDTO>>> GetBooks(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        return await GetBooksPaginated(pageNumber, pageSize);
     }
 
     // GET: api/Books/5

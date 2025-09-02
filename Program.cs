@@ -51,6 +51,8 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IFeaturedBookRepository, FeaturedBookRepository>();
 builder.Services.AddScoped<ISystemSettingsService, SystemSettingsService>();
 //builder.Services.AddScoped<IUserContextService, UserContextService>();
+builder.Services.AddScoped<IBookSearchRepository, BookSearchRepository>();
+builder.Services.AddSingleton<ITokenBlacklistService, TokenBlacklistService>();
 
 // Add DbContext with MySQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -69,7 +71,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var blacklistService = context.HttpContext.RequestServices
+                    .GetRequiredService<ITokenBlacklistService>();
+
+                var token = context.Request.Headers["Authorization"]
+                    .ToString().Replace("Bearer ", "");
+
+                if (await blacklistService.IsTokenBlacklistedAsync(token))
+                {
+                    context.Fail("Token has been invalidated");
+                }
+            }
         };
     });
 

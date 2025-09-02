@@ -49,6 +49,52 @@ namespace LibraryManagementSystem.Repositories
             .ToListAsync();
         }
 
+        public async Task<PaginatedResponseDTO<Book>> GetBooksPaginatedAsync(PaginationRequestDTO pagination)
+        {
+            var query = _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Category)
+                .OrderByDescending(b => b.BookId)
+                .Select(b => new Book
+                {
+                    BookId = b.BookId,
+                    Title = b.Title ?? string.Empty,
+                    Summary = b.Summary,
+                    CoverImagePath = b.CoverImagePath,
+                    HardCopyAvailable = b.HardCopyAvailable,
+                    SoftCopyAvailable = b.SoftCopyAvailable,
+                    AudioFileAvailable = b.AudioFileAvailable,
+                    TotalCopies = b.TotalCopies,
+                    AvailableCopies = b.AvailableCopies,
+                    Author = b.Author != null ? new Author
+                    {
+                        AuthorId = b.Author.AuthorId,
+                        Name = b.Author.Name ?? string.Empty
+                    } : null,
+                    Category = b.Category != null ? new Category
+                    {
+                        CategoryId = b.Category.CategoryId,
+                        Name = b.Category.Name ?? string.Empty
+                    } : null,
+                });
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
+            return new PaginatedResponseDTO<Book>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pagination.PageNumber,
+                PageSize = pagination.PageSize
+            };
+        }
+
+
         public async Task<Book?> GetBookByIdAsync(int id)
         {
             return await _context.Books
@@ -83,35 +129,6 @@ namespace LibraryManagementSystem.Repositories
         {
             return await _context.Books.AnyAsync(b => b.BookId == id);
         }
-
-
-
-        //// Repositories/BookRepository.cs
-        //public async Task<List<FeaturedBookDTO>> GetFeaturedBooksAsync()
-        //{
-        //    return await _context.Books
-        //        .Where(b => b.IsFeatured)
-        //        .Include(b => b.Author)
-        //        .Select(b => new FeaturedBookDTO
-        //        {
-        //            BookId = b.BookId,
-        //            Title = b.Title,
-        //            CoverImagePath = b.CoverImagePath,
-        //            AuthorName = b.Author.Name,
-        //            IsFeatured = b.IsFeatured
-        //        })
-        //        .ToListAsync();
-        //}
-
-        //public async Task<bool> SetFeaturedStatusAsync(int bookId, bool isFeatured)
-        //{
-        //    var book = await _context.Books.FindAsync(bookId);
-        //    if (book == null) return false;
-
-        //    book.IsFeatured = isFeatured;
-        //    await _context.SaveChangesAsync();
-        //    return true;
-        //}
 
     }
 }
