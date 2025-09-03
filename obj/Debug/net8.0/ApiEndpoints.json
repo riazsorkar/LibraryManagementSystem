@@ -334,7 +334,7 @@
   },
   {
     "ContainingType": "BooksController",
-    "Method": "GetBooks",
+    "Method": "GetBooksPaginated",
     "RelativePath": "api/Books",
     "HttpMethod": "GET",
     "IsController": true,
@@ -451,37 +451,6 @@
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BooksController",
-    "Method": "GetBooksPaginated",
-    "RelativePath": "api/Books/paginated",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "pageNumber",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageSize",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "LibraryManagementSystem.DTOs.PaginatedResponseDTO\u00601[[LibraryManagementSystem.DTOs.BookDTOs\u002BBookResponseDTO, LibraryManagementSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
   },
   {
     "ContainingType": "LibraryManagementSystem.Controllers.BorrowsController",

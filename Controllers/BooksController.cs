@@ -24,7 +24,7 @@ public class BooksController : ControllerBase
 
     
     [AllowAnonymous]
-    [HttpGet("paginated")]
+    [HttpGet]
     public async Task<ActionResult<PaginatedResponseDTO<BookResponseDTO>>> GetBooksPaginated(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10)
@@ -53,14 +53,14 @@ public class BooksController : ControllerBase
     }
 
     // Optional: Update the existing GetAll to use pagination too
-    [AllowAnonymous]
-    [HttpGet]
-    public async Task<ActionResult<PaginatedResponseDTO<BookResponseDTO>>> GetBooks(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10)
-    {
-        return await GetBooksPaginated(pageNumber, pageSize);
-    }
+    //[AllowAnonymous]
+    //[HttpGet]
+    //public async Task<ActionResult<PaginatedResponseDTO<BookResponseDTO>>> GetBooks(
+    //    [FromQuery] int pageNumber = 1,
+    //    [FromQuery] int pageSize = 10)
+    //{
+    //    return await GetBooksPaginated(pageNumber, pageSize);
+    //}
 
     // GET: api/Books/5
     [AllowAnonymous] // Public access
